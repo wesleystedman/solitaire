@@ -1,0 +1,35 @@
+#gameboard {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas: 
+        'stock   waste    .....  foundation foundation foundation foundation'
+        'tableau tableau tableau  tableau    tableau    tableau    tableau';
+    gap: 10px 10px;
+    width: 60vw;
+    height: 60vh;
+    grid-auto-flow: row;
+}
+
+#stock, #waste, .foundation, .tableau {
+    box-sizing: border-box;
+    /* width: 100px; */
+    /* height: 140px; */
+    border: 3px solid black;
+}
+
+#stock {
+    grid-area: stock;
+}
+
+#waste {
+    grid-area: waste;
+}
+
+.foundation {
+    grid-area: foundation;
+}
+
+.tableau {
+    grid-area: tableau;
+}
