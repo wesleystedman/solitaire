@@ -13,7 +13,7 @@ body {
         'stock   waste    .....  foundation foundation foundation foundation'
         'tableau tableau tableau  tableau    tableau    tableau    tableau';
     gap: 10px 10px;
-    width: min-content;
+    width: max-content;
     /* border: solid black; */
     /* background-color: darkgreen; */
     justify-items: center;
@@ -29,50 +29,14 @@ body {
     grid-area: waste;
 }
 
-/* foundation pile bases */
-#foundation-1 {
-    grid-row-start: 1;
-    grid-column-start: 4;
+#foundation {
+    grid-area: foundation;
 }
-#foundation-2 {
-    grid-row-start: 1;
-    grid-column-start: 5;
+#tableau {
+    grid-area: tableau;
 }
-#foundation-3 {
-    grid-row-start: 1;
-    grid-column-start: 6;
-}
-#foundation-4 {
-    grid-row-start: 1;
-    grid-column-start: 7;
-}
-
-/* tableau pile bases */
-#tableau-1 {
-    grid-row-start: 2;
-    grid-column-start: 1;
-}
-#tableau-2 {
-    grid-row-start: 2;
-    grid-column-start: 2;
-}
-#tableau-3 {
-    grid-row-start: 2;
-    grid-column-start: 3;
-}
-#tableau-4 {
-    grid-row-start: 2;
-    grid-column-start: 4;
-}
-#tableau-5 {
-    grid-row-start: 2;
-    grid-column-start: 5;
-}
-#tableau-6 {
-    grid-row-start: 2;
-    grid-column-start: 6;
-}
-#tableau-7 {
-    grid-row-start: 2;
-    grid-column-start: 7;
+#foundation, #tableau {
+    display: flex;
+    gap: 10px 10px;
+    justify-content: flex-start;
 }
