@@ -37,6 +37,6 @@ body {
 }
 #foundation, #tableau {
     display: flex;
-    gap: 10px 10px;
+    gap: 10px 10px; /* FF>=63, Chrome/Edge >=84 */
     justify-content: flex-start;
 }
