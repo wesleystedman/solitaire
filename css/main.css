@@ -40,3 +40,27 @@ body {
     gap: 10px 10px; /* FF>=63, Chrome/Edge >=84 */
     justify-content: flex-start;
 }
+
+.foundation .card {
+    position: relative;
+    left: -8px;
+    top: -8px;
+}
+
+.tableau {
+    overflow: visible;
+}
+.tableau .card {
+    position: relative;
+    display: block;
+    overflow: visible;
+    left: -6px; /* Border and margin are consistent for all card sizes */
+}
+.tableau .card.large {
+    top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
+}
+.tableau > .card.large {
+    /* top card of the tableau sits directly on top of the outline */
+    top: -8px; 
+    left: -8px;
+}
