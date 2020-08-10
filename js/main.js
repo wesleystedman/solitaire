@@ -42,8 +42,8 @@ const tableauEls = document.querySelectorAll('.tableau');
 
 /*----- event listeners -----*/
 document.querySelector('#gameboard').addEventListener('click', handleClick);
-document.querySelector('#new-game').addEventListener('click', init);
-// document.querySelector('#restart').addEventListener('click', ???);
+document.querySelector('#new-game').addEventListener('click', function() { init() });
+document.querySelector('#restart').addEventListener('click', function() { init(shuffledDeck) });
 
 // undo?
 // selectable rule variations?
@@ -105,7 +105,7 @@ function handleTableauClick(e) {
 
 }
 
-function init() {
+function init(deckToUse) {
 	stock = [];
 	waste = [];
 	foundations = [[], [], [], []];
@@ -115,11 +115,10 @@ function init() {
 		source: null
 	};
 
-	// shuffle the deck (Fisher-Yates)
-	shuffledDeck = shuffleDeck(INITIAL_DECK);
+	shuffledDeck = deckToUse ? deckToUse : shuffleDeck(INITIAL_DECK);
 	let copyDeck = [...shuffledDeck]; // make a copy so we can use the original to restart a game
 	// console.log(shuffledDeck);
-
+	
 	// deal to the tableaus
 	tableaus.forEach(function (pileArr, pileNum) {
 		for (let i = 0; i < pileNum + 1; i++) {
