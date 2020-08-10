@@ -83,7 +83,7 @@ function handleWasteClick(e) {
 		currentlyHeld.cards.push(waste.pop());
 		currentlyHeld.source = 'waste';
 	} else if (currentlyHeld.cards.length === 1 && currentlyHeld.source === 'waste') {
-		waste.push(currentlyHeld.pop());
+		waste.push(currentlyHeld.cards.pop());
 		currentlyHeld.source = null;
 	}
 }
@@ -174,6 +174,10 @@ function render() {
 
 	// held cards
 	// draw on the cursor
+	if (currentlyHeld.cards.length > 0) {
+		console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
+	}
+	
 }
 
 init();
