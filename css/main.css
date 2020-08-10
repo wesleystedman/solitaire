@@ -41,10 +41,11 @@ body {
     justify-content: flex-start;
 }
 
-.foundation .card {
+.foundation .card, #waste .card {
     position: relative;
-    left: -8px;
-    top: -8px;
+    display: block;
+    left: -6px;
+    top: -6px;
 }
 
 .tableau {

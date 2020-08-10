@@ -15,11 +15,15 @@ INITIAL_DECK = [
 
 
 /*----- app's state (variables) -----*/
+// 1D arrays (stacks)
 let stock;
 let waste;
+// 2D arrays (array of stacks)
 let foundations;
 let tableaus;
+// Could be an array, or something else
 let currentlyHeld;
+// 1D array, untouched outside of init and restart
 let shuffledDeck;
 
 // Stretch Goals:
@@ -45,32 +49,56 @@ document.querySelector('#new-game').addEventListener('click', init);
 // selectable rule variations?
 
 /*----- functions -----*/
-function handleClick() {
+function handleClick(e) {
 	// check click location, call appropriate function
-	// reveal any hidden cards on the top of a tableau stack
+	console.log(e.target);
+	// TODO: figure out how to identify something other than the base
+	if (e.target.id === 'stock') handleStockClick(e);
+	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
+	if (e.target.classList.contains('foundation')) handleFoundationClick(e);
+	if (e.target.classList.contains('tableau')) handleTableauClick(e);
 
+	// TODO: reveal any hidden cards on the top of a tableau stack
+
+	render();
 }
 
-function handleStockClick() {
-	// if holding a card, do nothing
-	// if not empty, deal up to 3 to waste
-	// else if empty, flip waste over
+function handleStockClick(e) {
+	if (currentlyHeld.length > 0) return;
 
+	if (stock.length === 0) {
+		while (waste.length > 0) {
+			stock.push(waste.pop());
+		}
+	} else if (stock.length > 0) {
+		// just dealing 1 card for now, because it's much easier to win
+		waste.push(stock.pop());
+	} else {
+		// ERROR HANDLING
+		console.log('UNHANDLED STOCK CLICK\nTARGET:\n', e.target, '\nSTOCK:\n', stock);
+	}
 }
 
-function handleWasteClick() {
-	// if not holding anything, pick up top card
-	// else if holding the top card, stop holding it
-
+function handleWasteClick(e) {
+	if (waste.length === 0) return;
+	console.log('currentlyHeld:', currentlyHeld);
+	if (currentlyHeld.length === 0 && waste.length > 0) {
+		currentlyHeld.push(waste[waste.length-1]);
+	} else if (currentlyHeld.length === 1 && waste.length > 0 && currentlyHeld[0] === waste[waste.length-1]) {
+		currentlyHeld.pop();
+	} else {
+		// ERROR HANDLING
+		console.log('UNHANDLED WASTE CLICK\nTARGET:\n', e.target, '\nWASTE:\n', stock);
+	}
 }
 
-function handleFoundationClick() {
+function handleFoundationClick(e) {
 	// if holding one card, and if same suit and rank is one higher
 	// place held card on foundation
 
 }
 
-function handleTableauClick() {
+function handleTableauClick(e) {
 	// if clicked on a hidden card, do nothing
 	// if not holding anything, and if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
 	// if holding one or more cards, 
@@ -86,6 +114,7 @@ function init() {
 	waste = [];
 	foundations = [[], [], [], []];
 	tableaus = [[], [], [], [], [], [], []];
+	currentlyHeld = [];
 
 	// shuffle the deck (Fisher-Yates)
 	shuffledDeck = shuffleDeck(INITIAL_DECK);
@@ -121,12 +150,26 @@ function shuffleDeck(deck) {
 }
 
 function render() {
-	// stock
-	//     if not empty, draw a face-down card
-	// waste
-	//     if not empty, draw the top 3 cards face-up
+	if (stock.length > 0) {
+		stockEl.classList.replace('outline', 'back');
+	} else {
+		stockEl.classList.replace('back', 'outline');
+	}
+	
+	// currently only drawing 1 card
+	if (waste.length > 0) {
+		wasteEl.classList.remove('outline');
+		let topCardEl = document.createElement('div');
+		topCardEl.classList.add('card', 'large', waste[waste.length-1]);
+		wasteEl.firstChild ? wasteEl.firstChild.replaceWith(topCardEl) : wasteEl.appendChild(topCardEl);
+	} else {
+		if (wasteEl.firstChild) wasteEl.firstChild.remove();
+		wasteEl.classList.add('outline');
+	}
+
 	// foundation
 	//     if not empty, draw top card face-up
+	
 	// tableau
 	//     if not empty, draw the cards face-up or face-down as appropriate
 }
