@@ -21,7 +21,7 @@ let waste;
 // 2D arrays (array of stacks)
 let foundations;
 let tableaus;
-// Could be an array, or something else
+// Object: 'cards' (array) and 'source' (string)
 let currentlyHeld;
 // 1D array, untouched outside of init and restart
 let shuffledDeck;
@@ -64,7 +64,7 @@ function handleClick(e) {
 }
 
 function handleStockClick(e) {
-	if (currentlyHeld.length > 0) return;
+	if (currentlyHeld.cards.length > 0) return;
 
 	if (stock.length === 0) {
 		while (waste.length > 0) {
@@ -73,22 +73,18 @@ function handleStockClick(e) {
 	} else if (stock.length > 0) {
 		// just dealing 1 card for now, because it's much easier to win
 		waste.push(stock.pop());
-	} else {
-		// ERROR HANDLING
-		console.log('UNHANDLED STOCK CLICK\nTARGET:\n', e.target, '\nSTOCK:\n', stock);
 	}
 }
 
 function handleWasteClick(e) {
 	if (waste.length === 0) return;
-	console.log('currentlyHeld:', currentlyHeld);
-	if (currentlyHeld.length === 0 && waste.length > 0) {
-		currentlyHeld.push(waste[waste.length-1]);
-	} else if (currentlyHeld.length === 1 && waste.length > 0 && currentlyHeld[0] === waste[waste.length-1]) {
-		currentlyHeld.pop();
-	} else {
-		// ERROR HANDLING
-		console.log('UNHANDLED WASTE CLICK\nTARGET:\n', e.target, '\nWASTE:\n', stock);
+
+	if (currentlyHeld.cards.length === 0 && waste.length > 0) {
+		currentlyHeld.cards.push(waste.pop());
+		currentlyHeld.source = 'waste';
+	} else if (currentlyHeld.cards.length === 1 && currentlyHeld.source === 'waste') {
+		waste.push(currentlyHeld.pop());
+		currentlyHeld.source = null;
 	}
 }
 
@@ -114,7 +110,10 @@ function init() {
 	waste = [];
 	foundations = [[], [], [], []];
 	tableaus = [[], [], [], [], [], [], []];
-	currentlyHeld = [];
+	currentlyHeld = {
+		cards: [],
+		source: null
+	};
 
 	// shuffle the deck (Fisher-Yates)
 	shuffledDeck = shuffleDeck(INITIAL_DECK);
@@ -172,6 +171,9 @@ function render() {
 	
 	// tableau
 	//     if not empty, draw the cards face-up or face-down as appropriate
+
+	// held cards
+	// draw on the cursor
 }
 
 init();
