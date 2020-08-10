@@ -31,17 +31,17 @@ let shuffledDeck;
 
 
 /*----- cached element references -----*/
-
+const stockEl = document.querySelector('#stock');
+const wasteEl = document.querySelector('#waste');
+const foundationEls = document.querySelectorAll('.foundation');
+const tableauEls = document.querySelectorAll('.tableau');
 
 /*----- event listeners -----*/
-// on gameboard click
-//     call handleClick
-// 
-// on new game button click
-//     call init
-// 
+document.querySelector('#gameboard').addEventListener('click', handleClick);
+document.querySelector('#new-game').addEventListener('click', init);
+// document.querySelector('#restart').addEventListener('click', ???);
+
 // undo?
-// restart game?
 // selectable rule variations?
 
 /*----- functions -----*/
@@ -90,7 +90,7 @@ function init() {
 	// shuffle the deck (Fisher-Yates)
 	shuffledDeck = shuffleDeck(INITIAL_DECK);
 	let copyDeck = [...shuffledDeck]; // make a copy so we can use the original to restart a game
-	console.log(copyDeck);
+	// console.log(shuffledDeck);
 
 	// deal to the tableaus
 	tableaus.forEach(function (pileArr, pileNum) {
@@ -98,13 +98,13 @@ function init() {
 			pileArr.push(copyDeck.pop());
 		}
 	});
-	console.log(tableaus, copyDeck);
+	// console.log(tableaus, copyDeck);
 
 	// mark the top card of each tableau as visible - still need to decide how to track that
 
 	// put the rest of the deck on the stock
 	stock = [...copyDeck];
-	console.log(stock);
+	// console.log(stock);
 
 	render();
 }
@@ -130,3 +130,5 @@ function render() {
 	// tableau
 	//     if not empty, draw the cards face-up or face-down as appropriate
 }
+
+init();
