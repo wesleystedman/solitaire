@@ -41,26 +41,26 @@ body {
     justify-content: flex-start;
 }
 
-.foundation .card, #waste .card {
+.foundation-base .card, #waste .card {
     position: relative;
     display: block;
     left: -6px;
     top: -6px;
 }
 
-.tableau {
+.tableau-base {
     overflow: visible;
 }
-.tableau .card {
+.tableau-base .card {
     position: relative;
     display: block;
     overflow: visible;
     left: -6px; /* Border and margin are consistent for all card sizes */
 }
-.tableau .card.large {
+.tableau-base .card.large {
     top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
 }
-.tableau > .card.large {
+.tableau-base > .card.large {
     /* top card of the tableau sits directly on top of the outline */
     top: -8px; 
     left: -8px;

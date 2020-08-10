@@ -1,12 +1,11 @@
 /*----- constants -----*/
 //initial unshuffled deck array
-INITIAL_DECK = [
+const INITIAL_DECK = [
 	'sA', 's02', 's03', 's04', 's05', 's06', 's07', 's08', 's09', 's10', 'sJ', 'sQ', 'sK',
 	'cA', 'c02', 'c03', 'c04', 'c05', 'c06', 'c07', 'c08', 'c09', 'c10', 'cJ', 'cQ', 'cK',
 	'hA', 'h02', 'h03', 'h04', 'h05', 'h06', 'h07', 'h08', 'h09', 'h10', 'hJ', 'hQ', 'hK',
 	'dA', 'd02', 'd03', 'd04', 'd05', 'd06', 'd07', 'd08', 'd09', 'd10', 'dJ', 'dQ', 'dK'
 ];
-
 
 //Maybe...
 //DEAL = 3;
@@ -29,21 +28,19 @@ let shuffledDeck;
 // Stretch Goals:
 // array (stack) of undo functions
 //     every time a handle*Click function moves one or more cards, push a function to reverse that change (including revealing cards)
-// the original shuffled deck so the current game can be restarted
-//     do we give init an optional arg then?
-//         or do we always pass an arg of the shuffled deck?
+
 
 
 /*----- cached element references -----*/
 const stockEl = document.querySelector('#stock');
 const wasteEl = document.querySelector('#waste');
-const foundationEls = document.querySelectorAll('.foundation');
-const tableauEls = document.querySelectorAll('.tableau');
+const foundationEls = document.querySelectorAll('.foundation-base');
+const tableauEls = document.querySelectorAll('.tableau-base');
 
 /*----- event listeners -----*/
 document.querySelector('#gameboard').addEventListener('click', handleClick);
-document.querySelector('#new-game').addEventListener('click', function() { init() });
-document.querySelector('#restart').addEventListener('click', function() { init(shuffledDeck) });
+document.querySelector('#new-game').addEventListener('click', function () { init() });
+document.querySelector('#restart').addEventListener('click', function () { init(shuffledDeck) });
 
 // undo?
 // selectable rule variations?
@@ -55,8 +52,8 @@ function handleClick(e) {
 	// TODO: figure out how to identify something other than the base
 	if (e.target.id === 'stock') handleStockClick(e);
 	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
-	if (e.target.classList.contains('foundation')) handleFoundationClick(e);
-	if (e.target.classList.contains('tableau')) handleTableauClick(e);
+	if (e.target.classList.contains('foundation-base') || e.target.classList.contains('foundation-card')) handleFoundationClick(e);
+	if (e.target.classList.contains('tableau-base')) handleTableauClick(e);
 
 	// TODO: reveal any hidden cards on the top of a tableau stack
 
@@ -70,9 +67,11 @@ function handleStockClick(e) {
 		while (waste.length > 0) {
 			stock.push(waste.pop());
 		}
+		// TODO: add undo handler
 	} else if (stock.length > 0) {
 		// just dealing 1 card for now, because it's much easier to win
 		waste.push(stock.pop());
+		// TODO: add undo handler
 	}
 }
 
@@ -89,9 +88,34 @@ function handleWasteClick(e) {
 }
 
 function handleFoundationClick(e) {
-	// if holding one card, and if same suit and rank is one higher
-	// place held card on foundation
+	if (currentlyHeld.cards.length > 1) return;
 
+	let pileIndex = e.target.id.match(/\d+/);
+	let foundation = foundations[pileIndex];
+
+	if (currentlyHeld.cards.length === 0 && foundation.length > 0) {
+		currentlyHeld.cards.push(foundation.pop());
+		currentlyHeld.source = `foundation${pileIndex}`;
+	} else { // implicit if (currentlyHeld.cards.length === 1)
+		if (currentlyHeld.source.startsWith('foundation') && currentlyHeld.source.endsWith(pileIndex)) {
+			foundation.push(currentlyHeld.cards.pop());
+			currentlyHeld.source = null;
+		} else if (!currentlyHeld.source.startsWith('foundation')) {
+			// console.log(foundation);
+			let topCard = foundation[foundation.length - 1];
+			let heldCard = currentlyHeld.cards[0];
+
+			if (foundation.length === 0 && heldCard.match(/A/)) {
+				foundation.push(currentlyHeld.cards.pop());
+				currentlyHeld.source = null;
+				// TODO: add undo handler
+			} else if (foundation.length > 0 && topCard[0] === heldCard[0] && INITIAL_DECK.indexOf(heldCard) === INITIAL_DECK.indexOf(topCard) + 1) {
+				foundation.push(currentlyHeld.cards.pop());
+				currentlyHeld.source = null;
+				// TODO: add undo handler
+			}
+		}
+	}
 }
 
 function handleTableauClick(e) {
@@ -115,10 +139,10 @@ function init(deckToUse) {
 		source: null
 	};
 
-	shuffledDeck = deckToUse ? deckToUse : shuffleDeck(INITIAL_DECK);
+	shuffledDeck = deckToUse ? deckToUse : shuffleDeck([...INITIAL_DECK]);
 	let copyDeck = [...shuffledDeck]; // make a copy so we can use the original to restart a game
 	// console.log(shuffledDeck);
-	
+
 	// deal to the tableaus
 	tableaus.forEach(function (pileArr, pileNum) {
 		for (let i = 0; i < pileNum + 1; i++) {
@@ -148,35 +172,69 @@ function shuffleDeck(deck) {
 }
 
 function render() {
+	renderStock();
+	renderWaste();
+	renderFoundation();
+	renderTableau();
+	renderHeldCards();
+}
+
+function renderStock() {
 	if (stock.length > 0) {
 		stockEl.classList.replace('outline', 'back');
 	} else {
 		stockEl.classList.replace('back', 'outline');
 	}
-	
+}
+
+function renderWaste() {
 	// currently only drawing 1 card
 	if (waste.length > 0) {
 		wasteEl.classList.remove('outline');
 		let topCardEl = document.createElement('div');
-		topCardEl.classList.add('card', 'large', waste[waste.length-1]);
+		topCardEl.classList.add('card', 'large', waste[waste.length - 1]);
 		wasteEl.firstChild ? wasteEl.firstChild.replaceWith(topCardEl) : wasteEl.appendChild(topCardEl);
 	} else {
 		if (wasteEl.firstChild) wasteEl.firstChild.remove();
 		wasteEl.classList.add('outline');
 	}
+}
 
+function renderFoundation() {
 	// foundation
 	//     if not empty, draw top card face-up
-	
+	if (foundations.length !== foundationEls.length) throw 'DATA ERROR: FOUNDATION SIZE';
+
+	for (let i = 0; i < foundations.length; i++) {
+		let foundationEl = foundationEls[i];
+		let foundation = foundations[i];
+
+		if (foundation.length > 0) {
+			foundationEl.classList.remove('outline');
+			let topCardEl = document.createElement('div');
+			topCardEl.classList.add('foundation-card', 'card', 'large', foundation[foundation.length - 1]);
+			topCardEl.id = `${foundationEl.id}-card`;
+			foundationEl.firstChild ? foundationEl.firstChild.replaceWith(topCardEl) : foundationEl.appendChild(topCardEl);
+		}
+		else {
+			if (foundationEl.firstChild) foundationEl.firstChild.remove();
+			foundationEl.classList.add('outline');
+		}
+	}
+}
+
+function renderTableau() {
 	// tableau
 	//     if not empty, draw the cards face-up or face-down as appropriate
 
+}
+
+function renderHeldCards() {
 	// held cards
 	// draw on the cursor
 	if (currentlyHeld.cards.length > 0) {
 		console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
 	}
-	
 }
 
 init();
