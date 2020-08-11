@@ -20,6 +20,7 @@ let waste;
 // 2D arrays (array of stacks)
 let foundations;
 let tableaus;
+let tableauCardIsVisible;
 // Object: 'cards' (array) and 'source' (string)
 let currentlyHeld;
 // 1D array, untouched outside of init and restart
@@ -133,6 +134,15 @@ function init(deckToUse) {
 	waste = [];
 	foundations = [[], [], [], []];
 	tableaus = [[], [], [], [], [], [], []];
+	tableauCardIsVisible = [
+		[true],
+		[false, true],
+		[false, false, true],
+		[false, false, false, true],
+		[false, false, false, false, true],
+		[false, false, false, false, false, true],
+		[false, false, false, false, false, false, true]
+	];
 	currentlyHeld = {
 		cards: [],
 		source: null
@@ -221,7 +231,6 @@ function renderFoundation() {
 }
 
 function renderTableau() {
-	// TODO: handle hidden cards
 	if (tableaus.length !== tableauEls.length) throw 'DATA ERROR: TABLEAU SIZE';
 
 	for (let i = 0; i < tableaus.length; i++) {
@@ -236,7 +245,8 @@ function renderTableau() {
 			let childCardEl;
 			for (let j = tableau.length-1; j >= 0; j--) {
 				let newCardEl = document.createElement('div');
-				newCardEl.classList.add('tableau-card', 'card', 'large', tableau[j]);
+				newCardEl.classList.add('tableau-card', 'card', 'large', tableauCardIsVisible[i][j] ? tableau[j] : 'back');
+				
 				newCardEl.id = `${tableauEl.id}-card-${j}`;
 				if (childCardEl) {
 					newCardEl.appendChild(childCardEl);
