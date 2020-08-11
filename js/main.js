@@ -55,7 +55,7 @@ function handleClick(e) {
 	if (e.target.id === 'stock') handleStockClick(e);
 	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
 	if (e.target.classList.contains('foundation-base') || e.target.classList.contains('foundation-card')) handleFoundationClick(e);
-	if (e.target.classList.contains('tableau-base')) handleTableauClick(e);
+	if (e.target.classList.contains('tableau-base') || e.target.classList.contains('tableau-card')) handleTableauClick(e);
 
 	// TODO: reveal any hidden cards on the top of a tableau stack
 
@@ -119,14 +119,38 @@ function handleFoundationClick(e) {
 }
 
 function handleTableauClick(e) {
-	// if clicked on a hidden card, do nothing
-	// if not holding anything, and if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
-	// if holding one or more cards, 
-	// if tableau stack is not empty, and bottom card of held stack is one rank less and is an opposite color suit of top card of tableau stack
-	// place held stack on tableau stack
-	// if tableau stack is empty and bottom card of held stack is a king
-	// place held stack on tableau stack
+	if (e.target.classList.contains('back')) return;
 
+	let [, col, row] = e.target.id.match(/^tableau-(\d+)-card-(\d+)/);
+	let tableau = tableaus[col];
+	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
+		// if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
+		for (let i = row; i < tableau.length - 1; i++) {
+			if (!validAdjacentCards(tableau[i], tableau[i + 1])) return;
+		}
+		currentlyHeld.cards = [...tableau.splice(row)];
+		currentlyHeld.source = `tableau${col}`;
+	} else if (currentlyHeld.cards.length > 0) {
+		if (tableau.length > 0) {
+			// if bottom card of held stack is one rank less and is an opposite color suit of top card of tableau stack
+			// place held stack on tableau stack
+
+		} else {
+			// if tableau stack is empty and bottom card of held stack is a king
+			// place held stack on tableau stack
+
+		}
+	}
+
+}
+
+// checks if two cards (on the tableau) can be placed or picked up together
+function validAdjacentCards(firstCard, secondCard) {
+	let colorCheck =
+		((firstCard[0] === 's' || firstCard[0] === 'c') && (secondCard[0] === 'h' || secondCard[0] === 'd')) ||
+		((firstCard[0] === 'h' || firstCard[0] === 'd') && (secondCard[0] === 's' || secondCard[0] === 'c'));
+	let rankCheck = INITIAL_DECK.indexOf(firstCard) % 13 === INITIAL_DECK.indexOf(secondCard) % 13 + 1;
+	return colorCheck && rankCheck;
 }
 
 function init(deckToUse) {
@@ -243,10 +267,10 @@ function renderTableau() {
 
 			// build a div chain from the end of the pile
 			let childCardEl;
-			for (let j = tableau.length-1; j >= 0; j--) {
+			for (let j = tableau.length - 1; j >= 0; j--) {
 				let newCardEl = document.createElement('div');
 				newCardEl.classList.add('tableau-card', 'card', 'large', tableauCardIsVisible[i][j] ? tableau[j] : 'back');
-				
+
 				newCardEl.id = `${tableauEl.id}-card-${j}`;
 				if (childCardEl) {
 					newCardEl.appendChild(childCardEl);
