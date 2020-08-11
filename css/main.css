@@ -5,6 +5,10 @@ body {
 	align-items: center;
 }
 
+header {
+	/* display: flex; */
+}
+
 #gameboard {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
@@ -51,13 +55,13 @@ body {
 .tableau-base {
 	overflow: visible;
 }
-.tableau-base .card {
+.tableau-base .card, #held-cards-container .card {
 	position: relative;
 	display: block;
 	overflow: visible;
 	left: -6px; /* Border and margin are consistent for all card sizes */
 }
-.tableau-base .card.large {
+.tableau-base .card.large, #held-cards-container .card.large {
 	top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
 }
 .tableau-base > .card.large {

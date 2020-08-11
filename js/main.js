@@ -315,11 +315,23 @@ function renderHeldCards() {
 	// held cards
 	// draw on the cursor
 	if (currentlyHeld.cards.length > 0) {
-		console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
+		// console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
 
-		let newHeldCards = document.createElement('div');
-		newHeldCards.classList.add('card', 'large', currentlyHeld.cards[0]);
-		heldCardsEl.firstChild ? heldCardsEl.firstChild.replaceWith(newHeldCards) : heldCardsEl.appendChild(newHeldCards);
+		// clear previous child chain - room for optimization here
+		if (heldCardsEl.firstChild) heldCardsEl.firstChild.remove();
+
+		// build a div chain from the end of the pile
+		let childCardEl;
+		for (let j = currentlyHeld.cards.length - 1; j >= 0; j--) {
+			let newCardEl = document.createElement('div');
+			newCardEl.classList.add('card', 'large', currentlyHeld.cards[j]);
+			// newCardEl.id = `${heldCardsEl.id}-card-${j}`;
+			if (childCardEl) {
+				newCardEl.appendChild(childCardEl);
+			}
+			childCardEl = newCardEl;
+		}
+		heldCardsEl.appendChild(childCardEl);
 	} else {
 		if (heldCardsEl.firstChild) heldCardsEl.firstChild.remove();
 	}
