@@ -95,7 +95,7 @@ function handleFoundationClick(e) {
 	if (currentlyHeld.cards.length === 0 && foundation.length > 0) {
 		currentlyHeld.cards.push(foundation.pop());
 		currentlyHeld.source = `foundation${pileIndex}`;
-	} else { // implicit if (currentlyHeld.cards.length === 1)
+	} else if (currentlyHeld.source !== null) { // implicit if (currentlyHeld.cards.length === 1)
 		if (currentlyHeld.source.startsWith('foundation') && currentlyHeld.source.endsWith(pileIndex)) {
 			foundation.push(currentlyHeld.cards.pop());
 			currentlyHeld.source = null;
@@ -221,9 +221,37 @@ function renderFoundation() {
 }
 
 function renderTableau() {
-	// tableau
-	//     if not empty, draw the cards face-up or face-down as appropriate
+	// TODO: handle hidden cards
+	if (tableaus.length !== tableauEls.length) throw 'DATA ERROR: TABLEAU SIZE';
 
+	for (let i = 0; i < tableaus.length; i++) {
+		let tableauEl = tableauEls[i];
+		let tableau = tableaus[i];
+
+		if (tableau.length > 0) {
+			/*
+			Each pile in the tableau has n cards
+			each card's div must be a child of the one z-below/y-above it
+			so...
+				let childCardEl
+				for loop from end of pile
+					make new div
+					add classes
+					add id
+					if childCardEl appendChild
+					set childCardEl to this element
+			*/
+
+
+			// let topCardEl = document.createElement('div');
+			// topCardEl.classList.add('tableau-card', 'card', 'large', tableau[tableau.length - 1]);
+			// topCardEl.id = `${tableauEl.id}-card`;
+			// tableauEl.firstChild ? tableauEl.firstChild.replaceWith(topCardEl) : tableauEl.appendChild(topCardEl);
+		}
+		else {
+			if (tableauEl.firstChild) tableauEl.firstChild.remove();
+		}
+	}
 }
 
 function renderHeldCards() {
