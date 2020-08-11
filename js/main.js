@@ -20,7 +20,7 @@ let waste;
 // 2D arrays (array of stacks)
 let foundations;
 let tableaus;
-let tableauCardIsVisible;
+let tableauCardIsHidden;
 // Object: 'cards' (array) and 'source' (string)
 let currentlyHeld;
 // 1D array, untouched outside of init and restart
@@ -58,6 +58,11 @@ function handleClick(e) {
 	if (e.target.classList.contains('tableau-base') || e.target.classList.contains('tableau-card')) handleTableauClick(e);
 
 	// TODO: reveal any hidden cards on the top of a tableau stack
+	if (currentlyHeld.cards.length === 0) {
+		tableaus.forEach(function (pile, index) {
+			tableauCardIsHidden[index][pile.length-1] = false;
+		});
+	}
 
 	render();
 }
@@ -120,18 +125,21 @@ function handleFoundationClick(e) {
 
 function handleTableauClick(e) {
 	let [, col, , row] = e.target.id.match(/tableau-(\d+)(-card-(\d+))?/);
+	col = Number.parseInt(col);
+	row = Number.parseInt(row);
 	let tableau = tableaus[col];
 	
-	if (e.target.classList.contains('back') && row != tableau.length - 1) return; // note that row is a string
+	if (e.target.classList.contains('back') && row !== tableau.length - 1) return;
 	
 	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
 		// if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
 		for (let i = row; i < tableau.length - 1; i++) {
+			console.log(i);
 			if (!validAdjacentCards(tableau[i], tableau[i + 1])) return;
 		}
 		currentlyHeld.cards = [...tableau.splice(row)];
 		currentlyHeld.source = `tableau${col}`;
-	} else if (currentlyHeld.cards.length > 0 && row == tableau.length - 1) {
+	} else if (currentlyHeld.cards.length > 0 && row === tableau.length - 1) {
 		if (currentlyHeld.source.startsWith('tableau') && currentlyHeld.source.endsWith(col)) {
 			while (currentlyHeld.cards.length > 0) {
 				tableau.push(currentlyHeld.cards.shift());
@@ -174,14 +182,14 @@ function init(deckToUse) {
 	waste = [];
 	foundations = [[], [], [], []];
 	tableaus = [[], [], [], [], [], [], []];
-	tableauCardIsVisible = [
-		[true],
-		[false, true],
-		[false, false, true],
-		[false, false, false, true],
-		[false, false, false, false, true],
-		[false, false, false, false, false, true],
-		[false, false, false, false, false, false, true]
+	tableauCardIsHidden = [
+		[false],
+		[true, false],
+		[true, true, false],
+		[true, true, true, false],
+		[true, true, true, true, false],
+		[true, true, true, true, true, false],
+		[true, true, true, true, true, true, false]
 	];
 	currentlyHeld = {
 		cards: [],
@@ -285,7 +293,7 @@ function renderTableau() {
 			let childCardEl;
 			for (let j = tableau.length - 1; j >= 0; j--) {
 				let newCardEl = document.createElement('div');
-				newCardEl.classList.add('tableau-card', 'card', 'large', tableauCardIsVisible[i][j] ? tableau[j] : 'back');
+				newCardEl.classList.add('tableau-card', 'card', 'large', tableauCardIsHidden[i][j] ? 'back' : tableau[j]);
 
 				newCardEl.id = `${tableauEl.id}-card-${j}`;
 				if (childCardEl) {
