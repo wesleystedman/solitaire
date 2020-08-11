@@ -36,6 +36,7 @@ const stockEl = document.querySelector('#stock');
 const wasteEl = document.querySelector('#waste');
 const foundationEls = document.querySelectorAll('.foundation-base');
 const tableauEls = document.querySelectorAll('.tableau-base');
+const heldCardsEl = document.querySelector('#held-cards-container');
 
 /*----- event listeners -----*/
 document.querySelector('#gameboard').addEventListener('click', handleClick);
@@ -199,8 +200,6 @@ function renderWaste() {
 }
 
 function renderFoundation() {
-	// foundation
-	//     if not empty, draw top card face-up
 	if (foundations.length !== foundationEls.length) throw 'DATA ERROR: FOUNDATION SIZE';
 
 	for (let i = 0; i < foundations.length; i++) {
@@ -232,6 +231,12 @@ function renderHeldCards() {
 	// draw on the cursor
 	if (currentlyHeld.cards.length > 0) {
 		console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
+
+		let newHeldCards = document.createElement('div');
+		newHeldCards.classList.add('card', 'large', currentlyHeld.cards[0]);
+		heldCardsEl.firstChild ? heldCardsEl.firstChild.replaceWith(newHeldCards) : heldCardsEl.appendChild(newHeldCards);
+	} else {
+		if (heldCardsEl.firstChild) heldCardsEl.firstChild.remove();
 	}
 }
 
