@@ -1,67 +1,67 @@
 body {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	/* justify-content: center; */
+	align-items: center;
 }
 
 #gameboard {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-areas: 
-        'stock   waste    .....  foundation foundation foundation foundation'
-        'tableau tableau tableau  tableau    tableau    tableau    tableau';
-    gap: 10px 10px;
-    width: max-content;
-    /* border: solid black; */
-    /* background-color: darkgreen; */
-    justify-items: center;
-    align-items: start;
-    align-content: start;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	grid-template-areas: 
+		'stock   waste    .....  foundation foundation foundation foundation'
+		'tableau tableau tableau  tableau    tableau    tableau    tableau';
+	gap: 10px 10px;
+	width: max-content;
+	/* border: solid black; */
+	/* background-color: darkgreen; */
+	justify-items: center;
+	align-items: start;
+	align-content: start;
 }
 
 #stock {
-    grid-area: stock;
+	grid-area: stock;
 }
 
 #waste {
-    grid-area: waste;
+	grid-area: waste;
 }
 
 #foundation {
-    grid-area: foundation;
+	grid-area: foundation;
 }
 #tableau {
-    grid-area: tableau;
+	grid-area: tableau;
 }
 #foundation, #tableau {
-    display: flex;
-    gap: 10px 10px; /* FF>=63, Chrome/Edge >=84 */
-    justify-content: flex-start;
+	display: flex;
+	gap: 10px 10px; /* FF>=63, Chrome/Edge >=84 */
+	justify-content: flex-start;
 }
 
 .foundation-base .card, #waste .card {
-    position: relative;
-    display: block;
-    left: -6px;
-    top: -6px;
+	position: relative;
+	display: block;
+	left: -6px;
+	top: -6px;
 }
 
 .tableau-base {
-    overflow: visible;
+	overflow: visible;
 }
 .tableau-base .card {
-    position: relative;
-    display: block;
-    overflow: visible;
-    left: -6px; /* Border and margin are consistent for all card sizes */
+	position: relative;
+	display: block;
+	overflow: visible;
+	left: -6px; /* Border and margin are consistent for all card sizes */
 }
 .tableau-base .card.large {
-    top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
+	top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
 }
 .tableau-base > .card.large {
-    /* top card of the tableau sits directly on top of the outline */
-    top: -8px; 
-    left: -8px;
+	/* top card of the tableau sits directly on top of the outline */
+	top: -8px; 
+	left: -8px;
 }
