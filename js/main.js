@@ -76,8 +76,6 @@ function handleStockClick(e) {
 }
 
 function handleWasteClick(e) {
-	if (waste.length === 0) return;
-
 	if (currentlyHeld.cards.length === 0 && waste.length > 0) {
 		currentlyHeld.cards.push(waste.pop());
 		currentlyHeld.source = 'waste';
