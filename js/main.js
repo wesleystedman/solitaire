@@ -223,9 +223,10 @@ function init(deckToUse) {
 function shuffleDeck(deck) {
 	for (let i = deck.length - 1; i > 0; i--) {
 		let rndIdx = Math.floor(Math.random() * (i + 1));
-		let temp = deck[i];
-		deck[i] = deck[rndIdx];
-		deck[rndIdx] = temp;
+		[deck[i], deck[rndIdx]] = [deck[rndIdx], deck[i]];
+		// let temp = deck[i];
+		// deck[i] = deck[rndIdx];
+		// deck[rndIdx] = temp;
 	}
 	return deck;
 }
