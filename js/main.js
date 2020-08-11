@@ -129,25 +129,26 @@ function handleTableauClick(e) {
 	row = Number.parseInt(row);
 	let tableau = tableaus[col];
 	
+	// case: clicked on a hidden card that isn't the top card (second half relevant for returning a held card to its prior place)
 	if (e.target.classList.contains('back') && row !== tableau.length - 1) return;
 	
+	// case: picking up one or more cards
 	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
-		// if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
 		for (let i = row; i < tableau.length - 1; i++) {
 			console.log(i);
 			if (!validAdjacentCards(tableau[i], tableau[i + 1])) return;
 		}
 		currentlyHeld.cards = [...tableau.splice(row)];
 		currentlyHeld.source = `tableau${col}`;
-	} else if (currentlyHeld.cards.length > 0 && row === tableau.length - 1) {
+	} else if (currentlyHeld.cards.length > 0) {
+		// case: returning a card to its prior place
 		if (currentlyHeld.source.startsWith('tableau') && currentlyHeld.source.endsWith(col)) {
 			while (currentlyHeld.cards.length > 0) {
 				tableau.push(currentlyHeld.cards.shift());
 			}
 			currentlyHeld.source = null;
-		} else if (tableau.length > 0) {
-			// if bottom card of held stack is one rank less and is an opposite color suit of top card of tableau stack
-			// place held stack on tableau stack
+		// case: placing one or more cards on another pile
+		} else if (tableau.length > 0  && row === tableau.length - 1) {
 			if (validAdjacentCards(tableau[row], currentlyHeld.cards[0])) {
 				while (currentlyHeld.cards.length > 0) {
 					tableau.push(currentlyHeld.cards.shift());
@@ -156,6 +157,7 @@ function handleTableauClick(e) {
 				// TODO: add undo handler
 			}
 		} else { // implied tableau.length === 0
+			// case: placing a king on an empty pile
 			if (currentlyHeld.cards[0][1] === 'K') {
 				while (currentlyHeld.cards.length > 0) {
 					tableau.push(currentlyHeld.cards.shift());
