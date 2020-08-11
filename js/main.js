@@ -229,24 +229,21 @@ function renderTableau() {
 		let tableau = tableaus[i];
 
 		if (tableau.length > 0) {
-			/*
-			Each pile in the tableau has n cards
-			each card's div must be a child of the one z-below/y-above it
-			so...
-				let childCardEl
-				for loop from end of pile
-					make new div
-					add classes
-					add id
-					if childCardEl appendChild
-					set childCardEl to this element
-			*/
+			// clear previous child chain - room for optimization here
+			if (tableauEl.firstChild) tableauEl.firstChild.remove();
 
-
-			// let topCardEl = document.createElement('div');
-			// topCardEl.classList.add('tableau-card', 'card', 'large', tableau[tableau.length - 1]);
-			// topCardEl.id = `${tableauEl.id}-card`;
-			// tableauEl.firstChild ? tableauEl.firstChild.replaceWith(topCardEl) : tableauEl.appendChild(topCardEl);
+			// build a div chain from the end of the pile
+			let childCardEl;
+			for (let j = tableau.length-1; j >= 0; j--) {
+				let newCardEl = document.createElement('div');
+				newCardEl.classList.add('tableau-card', 'card', 'large', tableau[j]);
+				newCardEl.id = `${tableauEl.id}-card-${j}`;
+				if (childCardEl) {
+					newCardEl.appendChild(childCardEl);
+				}
+				childCardEl = newCardEl;
+			}
+			tableauEl.appendChild(childCardEl);
 		}
 		else {
 			if (tableauEl.firstChild) tableauEl.firstChild.remove();
