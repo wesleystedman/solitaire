@@ -119,10 +119,11 @@ function handleFoundationClick(e) {
 }
 
 function handleTableauClick(e) {
-	if (e.target.classList.contains('back')) return;
-
-	let [, col, row] = e.target.id.match(/^tableau-(\d+)-card-(\d+)/);
+	let [, col, , row] = e.target.id.match(/tableau-(\d+)(-card-(\d+))?/);
 	let tableau = tableaus[col];
+	
+	if (e.target.classList.contains('back') && row != tableau.length - 1) return; // note that row is a string
+	
 	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
 		// if top card of pile through clicked-on card are a sequence of ascending ranks and alternating suit colors, pick up stack from clicked on card
 		for (let i = row; i < tableau.length - 1; i++) {
@@ -130,15 +131,30 @@ function handleTableauClick(e) {
 		}
 		currentlyHeld.cards = [...tableau.splice(row)];
 		currentlyHeld.source = `tableau${col}`;
-	} else if (currentlyHeld.cards.length > 0) {
-		if (tableau.length > 0) {
+	} else if (currentlyHeld.cards.length > 0 && row == tableau.length - 1) {
+		if (currentlyHeld.source.startsWith('tableau') && currentlyHeld.source.endsWith(col)) {
+			while (currentlyHeld.cards.length > 0) {
+				tableau.push(currentlyHeld.cards.shift());
+			}
+			currentlyHeld.source = null;
+		} else if (tableau.length > 0) {
 			// if bottom card of held stack is one rank less and is an opposite color suit of top card of tableau stack
 			// place held stack on tableau stack
-
-		} else {
-			// if tableau stack is empty and bottom card of held stack is a king
-			// place held stack on tableau stack
-
+			if (validAdjacentCards(tableau[row], currentlyHeld.cards[0])) {
+				while (currentlyHeld.cards.length > 0) {
+					tableau.push(currentlyHeld.cards.shift());
+				}
+				currentlyHeld.source = null;
+				// TODO: add undo handler
+			}
+		} else { // implied tableau.length === 0
+			if (currentlyHeld.cards[0][1] === 'K') {
+				while (currentlyHeld.cards.length > 0) {
+					tableau.push(currentlyHeld.cards.shift());
+				}
+				currentlyHeld.source = null;
+				// TODO: add undo handler
+			}
 		}
 	}
 
