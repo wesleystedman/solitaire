@@ -49,6 +49,7 @@ document.querySelector('#restart').addEventListener('click', function () { init(
 
 /*----- functions -----*/
 function handleClick(e) {
+	if (isGameWon()) return;
 	// check click location, call appropriate function
 	console.log(e.target);
 	// TODO: figure out how to identify something other than the base
@@ -179,6 +180,10 @@ function validAdjacentCards(firstCard, secondCard) {
 	return colorCheck && rankCheck;
 }
 
+function isGameWon() {
+	return foundations.every(pile => pile.length === 13);
+}
+
 function init(deckToUse) {
 	stock = [];
 	waste = [];
@@ -237,6 +242,8 @@ function render() {
 	renderFoundation();
 	renderTableau();
 	renderHeldCards();
+
+	if (isGameWon()) alert('Winner!');
 }
 
 function renderStock() {
