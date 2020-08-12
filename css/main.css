@@ -85,9 +85,10 @@ header * {
 
 
 #held-cards-container {
+	pointer-events: none;
 	position: absolute;
 	--x: 0px;
 	--y: 0px;
-	left: calc(var(--x) - 51px);
-	top: calc(var(--y) - 70px);
+	left: var(--x);
+	top: var(--y);
 }

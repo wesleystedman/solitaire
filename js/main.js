@@ -51,9 +51,7 @@ document.querySelector('html').addEventListener('mousemove', handleMousemove);
 /*----- functions -----*/
 function handleClick(e) {
 	if (isGameWon()) return;
-	// check click location, call appropriate function
-	console.log(e.target);
-	// TODO: figure out how to identify something other than the base
+	// console.log(e.target);
 	if (e.target.id === 'stock') handleStockClick(e);
 	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
 	if (e.target.classList.contains('foundation-base') || e.target.classList.contains('foundation-card')) handleFoundationClick(e);
@@ -137,7 +135,6 @@ function handleTableauClick(e) {
 	// case: picking up one or more cards
 	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
 		for (let i = row; i < tableau.length - 1; i++) {
-			console.log(i);
 			if (!validAdjacentCards(tableau[i], tableau[i + 1])) return;
 		}
 		currentlyHeld.cards = [...tableau.splice(row)];
@@ -186,11 +183,8 @@ function isGameWon() {
 }
 
 function handleMousemove(e) {
-	if (currentlyHeld.cards.length === 0) return;
-
-	console.log(e);
-	heldCardsEl.style.setProperty('--x', `${e.clientX}px`);
-	heldCardsEl.style.setProperty('--y', `${e.clientY}px`);
+	heldCardsEl.style.setProperty('--x', `${e.clientX - 51}px`);
+	heldCardsEl.style.setProperty('--y', `${currentlyHeld.cards.length === 1 ? e.clientY - 50 : e.clientY - 30}px`);
 }
 
 function init(deckToUse) {
