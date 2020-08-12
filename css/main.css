@@ -71,7 +71,5 @@ header * {
 	top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
 }
 .tableau-base > .card.large {
-	/* top card of the tableau sits directly on top of the outline */
-	top: -8px; 
-	left: -8px;
+	top: -6px;
 }

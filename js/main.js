@@ -298,7 +298,7 @@ function renderTableau() {
 		if (tableau.length > 0) {
 			// clear previous child chain - room for optimization here
 			if (tableauEl.firstChild) tableauEl.firstChild.remove();
-
+			tableauEl.classList.remove('outline');
 			// build a div chain from the end of the pile
 			let childCardEl;
 			for (let j = tableau.length - 1; j >= 0; j--) {
@@ -315,6 +315,7 @@ function renderTableau() {
 		}
 		else {
 			if (tableauEl.firstChild) tableauEl.firstChild.remove();
+			tableauEl.classList.add('outline');
 		}
 	}
 }
