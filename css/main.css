@@ -6,7 +6,12 @@ body {
 }
 
 header {
-	/* display: flex; */
+	display: flex;
+	flex-direction: row;
+}
+
+header * {
+	/* padding: 0 5px; */
 }
 
 #gameboard {
@@ -16,7 +21,7 @@ header {
 	grid-template-areas: 
 		'stock   waste    .....  foundation foundation foundation foundation'
 		'tableau tableau tableau  tableau    tableau    tableau    tableau';
-	gap: 10px 10px;
+	/* gap: 10px 10px; */
 	width: max-content;
 	/* border: solid black; */
 	/* background-color: darkgreen; */
@@ -41,7 +46,8 @@ header {
 }
 #foundation, #tableau {
 	display: flex;
-	gap: 10px 10px; /* FF>=63, Chrome/Edge >=84 */
+	/* flex gap is FF>=63, Chrome/Edge >=84, and not yet su */
+	/* gap: 10px 10px; */
 	justify-content: flex-start;
 }
 
