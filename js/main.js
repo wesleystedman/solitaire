@@ -184,7 +184,7 @@ function isGameWon() {
 
 function handleMousemove(e) {
 	heldCardsEl.style.setProperty('--x', `${e.clientX - 51}px`);
-	heldCardsEl.style.setProperty('--y', `${currentlyHeld.cards.length === 1 ? e.clientY - 50 : e.clientY - 30}px`);
+	heldCardsEl.style.setProperty('--y', `${e.clientY - 30}px`);
 }
 
 function init(deckToUse) {
