@@ -41,9 +41,11 @@ header * {
 #foundation {
 	grid-area: foundation;
 }
+
 #tableau {
 	grid-area: tableau;
 }
+
 #foundation, #tableau {
 	display: flex;
 	/* flex gap is FF>=63, Chrome/Edge >=84, and not yet su */
@@ -61,15 +63,31 @@ header * {
 .tableau-base {
 	overflow: visible;
 }
+
 .tableau-base .card, #held-cards-container .card {
 	position: relative;
 	display: block;
 	overflow: visible;
 	left: -6px; /* Border and margin are consistent for all card sizes */
 }
+
 .tableau-base .card.large, #held-cards-container .card.large {
 	top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
 }
+
 .tableau-base > .card.large {
 	top: -6px;
+}
+
+#held-cards-container > .card.large {
+	top: 0px;
+}
+
+
+#held-cards-container {
+	position: absolute;
+	--x: 0px;
+	--y: 0px;
+	left: calc(var(--x) - 51px);
+	top: calc(var(--y) - 70px);
 }

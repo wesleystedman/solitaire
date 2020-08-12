@@ -43,6 +43,7 @@ const heldCardsEl = document.querySelector('#held-cards-container');
 document.querySelector('#gameboard').addEventListener('click', handleClick);
 document.querySelector('#new-game').addEventListener('click', function () { init() });
 document.querySelector('#restart').addEventListener('click', function () { init(shuffledDeck) });
+document.querySelector('html').addEventListener('mousemove', handleMousemove);
 
 // undo?
 // selectable rule variations?
@@ -182,6 +183,14 @@ function validAdjacentCards(firstCard, secondCard) {
 
 function isGameWon() {
 	return foundations.every(pile => pile.length === 13);
+}
+
+function handleMousemove(e) {
+	if (currentlyHeld.cards.length === 0) return;
+
+	console.log(e);
+	heldCardsEl.style.setProperty('--x', `${e.clientX}px`);
+	heldCardsEl.style.setProperty('--y', `${e.clientY}px`);
 }
 
 function init(deckToUse) {
