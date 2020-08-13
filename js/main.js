@@ -57,7 +57,6 @@ function handleClick(e) {
 	if (e.target.classList.contains('foundation-base') || e.target.classList.contains('foundation-card')) handleFoundationClick(e);
 	if (e.target.classList.contains('tableau-base') || e.target.classList.contains('tableau-card')) handleTableauClick(e);
 
-	// TODO: reveal any hidden cards on the top of a tableau stack
 	if (currentlyHeld.cards.length === 0) {
 		tableaus.forEach(function (pile, index) {
 			tableauCardIsHidden[index][pile.length-1] = false;
@@ -182,6 +181,31 @@ function isGameWon() {
 	return foundations.every(pile => pile.length === 13);
 }
 
+function isGameLost() {
+	let gameOver = true;
+	// single-step moves
+	// check for cards that can be moved to the foundation
+	/*
+	foundations.forEach( function (foundation) {
+		let nextCard = INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1;
+		// if a card in the stock, waste, or hand can be moved to the foundation
+		if (stock.includes(nextCard) || waste.includes(nextCard) || currentlyHeld.cards.includes(nextCard)) gameOver = false;
+		// if the top card of a tableau stack can be moved to the foundation
+		tableaus.forEach( function (tableau) {
+			if (tableau[tableau.length - 1] === nextCard) gameOver = false;
+		});
+	});
+	*/
+	// check for cards that can be moved from stock or waste to tableau
+	// check if the card above the topmost hidden card of each tableau stack can be moved to another tableau stack
+	
+	// multi-step moves
+	// check if the next card on a foundation is a revealed card on the tableau
+	//   if so, check if the card above that one can be moved to another foundation pile
+	//     if so, gameOver = false
+	//   else, check if a card from the stock or waste 
+}
+
 function handleMousemove(e) {
 	heldCardsEl.style.setProperty('--x', `${e.clientX - 51}px`);
 	heldCardsEl.style.setProperty('--y', `${e.clientY - 30}px`);
@@ -217,8 +241,6 @@ function init(deckToUse) {
 		}
 	});
 	// console.log(tableaus, copyDeck);
-
-	// mark the top card of each tableau as visible - still need to decide how to track that
 
 	// put the rest of the deck on the stock
 	stock = [...copyDeck];
