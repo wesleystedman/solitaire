@@ -50,7 +50,7 @@ document.querySelector('html').addEventListener('mousemove', handleMousemove);
 
 /*----- functions -----*/
 function handleClick(e) {
-	if (isGameWon()) return;
+	if (isGameWon() || (currentlyHeld.cards.length === 0 && isGameLost())) return;
 	// console.log(e.target);
 	if (e.target.id === 'stock') handleStockClick(e);
 	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
@@ -59,7 +59,7 @@ function handleClick(e) {
 
 	if (currentlyHeld.cards.length === 0) {
 		tableaus.forEach(function (pile, index) {
-			tableauCardIsHidden[index][pile.length-1] = false;
+			tableauCardIsHidden[index][pile.length - 1] = false;
 		});
 	}
 
@@ -127,10 +127,10 @@ function handleTableauClick(e) {
 	col = Number.parseInt(col);
 	row = Number.parseInt(row);
 	let tableau = tableaus[col];
-	
+
 	// case: clicked on a hidden card that isn't the top card (second half relevant for returning a held card to its prior place)
 	if (e.target.classList.contains('back') && row !== tableau.length - 1) return;
-	
+
 	// case: picking up one or more cards
 	if (currentlyHeld.cards.length === 0 && tableau.length > 0) {
 		for (let i = row; i < tableau.length - 1; i++) {
@@ -145,8 +145,8 @@ function handleTableauClick(e) {
 				tableau.push(currentlyHeld.cards.shift());
 			}
 			currentlyHeld.source = null;
-		// case: placing one or more cards on another pile
-		} else if (tableau.length > 0  && row === tableau.length - 1) {
+		} else if (tableau.length > 0 && row === tableau.length - 1) {
+			// case: placing one or more cards on another pile
 			if (validAdjacentCards(tableau[row], currentlyHeld.cards[0])) {
 				while (currentlyHeld.cards.length > 0) {
 					tableau.push(currentlyHeld.cards.shift());
@@ -181,29 +181,54 @@ function isGameWon() {
 	return foundations.every(pile => pile.length === 13);
 }
 
+// naive check that does not investigate if the available moves meaningfully advance the game
 function isGameLost() {
-	let gameOver = true;
-	// single-step moves
-	// check for cards that can be moved to the foundation
-	/*
-	foundations.forEach( function (foundation) {
-		let nextCard = INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1;
-		// if a card in the stock, waste, or hand can be moved to the foundation
-		if (stock.includes(nextCard) || waste.includes(nextCard) || currentlyHeld.cards.includes(nextCard)) gameOver = false;
-		// if the top card of a tableau stack can be moved to the foundation
-		tableaus.forEach( function (tableau) {
-			if (tableau[tableau.length - 1] === nextCard) gameOver = false;
+	let moveExists = false;
+	// for each card in the stock and waste, check if it can be moved to the tableau or foundation
+	waste.forEach(function (wasteCard) {
+		foundations.forEach(function (foundation) {
+			if (wasteCard[1] === 'A' || (INITIAL_DECK.indexOf(wasteCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
+				xxxCard[0] === foundation[foundation.length - 1][0])) {
+					moveExists = true;
+			}
+		});
+		tableaus.forEach(function (tableau) {
+			if (validAdjacentCards(tableau[tableau.length - 1], wasteCard)) moveExists = true;
 		});
 	});
-	*/
-	// check for cards that can be moved from stock or waste to tableau
-	// check if the card above the topmost hidden card of each tableau stack can be moved to another tableau stack
-	
-	// multi-step moves
-	// check if the next card on a foundation is a revealed card on the tableau
-	//   if so, check if the card above that one can be moved to another foundation pile
-	//     if so, gameOver = false
-	//   else, check if a card from the stock or waste 
+	stock.forEach(function (stockCard) {
+		foundations.forEach(function (foundation) {
+			if (stockCard[1] === 'A' || (INITIAL_DECK.indexOf(stockCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
+				xxxCard[0] === foundation[foundation.length - 1][0])) {
+					moveExists = true;
+			}
+		});
+		tableaus.forEach(function (tableau) {
+			if (validAdjacentCards(tableau[tableau.length - 1], stockCard)) moveExists = true;
+		});
+	});
+	// for the top card of each foundation, check if it can be moved to the tableau (foundation -> foundation is always meaningless)
+	foundations.forEach(function (foundation) {
+		tableaus.forEach(function (tableau) {
+			if (validAdjacentCards(tableau[tableau.length - 1], foundation[foundation.length - 1])) moveExists = true;
+		});
+	});
+	// for each revealed card in the tableau, check if it can be moved to the foundation or another pile on the tableau
+	tableaus.forEach(function (tableau, col) {
+		tableau.forEach(function(tableauCard, row) {
+			if (tableauCardIsHidden[col][row]) return; // ignore hidden cards
+			foundations.forEach(function (foundation) {
+				if (tableauCard[1] === 'A' || (INITIAL_DECK.indexOf(tableauCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
+					xxxCard[0] === foundation[foundation.length - 1][0])) {
+						moveExists = true;
+				}
+			});
+			tableaus.forEach(function (otherTableau, otherCol) {
+				if (col !== otherCol && validAdjacentCards(otherTableau[otherTableau.length - 1], tableauCard)) moveExists = true;
+			});
+		});
+	});
+	return !moveExists;
 }
 
 function handleMousemove(e) {
