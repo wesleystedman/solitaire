@@ -188,46 +188,52 @@ function isGameLost() {
 	waste.forEach(function (wasteCard) {
 		foundations.forEach(function (foundation) {
 			if (wasteCard[1] === 'A' || (INITIAL_DECK.indexOf(wasteCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
-				xxxCard[0] === foundation[foundation.length - 1][0])) {
-					moveExists = true;
+				wasteCard[0] === foundation[foundation.length - 1][0])) {
+				moveExists = true;
 			}
 		});
 		tableaus.forEach(function (tableau) {
-			if (validAdjacentCards(tableau[tableau.length - 1], wasteCard)) moveExists = true;
+			if (tableau.length > 0 && validAdjacentCards(tableau[tableau.length - 1], wasteCard)) moveExists = true;
 		});
 	});
+	// console.log('waste -> tableau/foundation', moveExists);
 	stock.forEach(function (stockCard) {
 		foundations.forEach(function (foundation) {
 			if (stockCard[1] === 'A' || (INITIAL_DECK.indexOf(stockCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
-				xxxCard[0] === foundation[foundation.length - 1][0])) {
-					moveExists = true;
+				stockCard[0] === foundation[foundation.length - 1][0])) {
+				moveExists = true;
 			}
 		});
 		tableaus.forEach(function (tableau) {
-			if (validAdjacentCards(tableau[tableau.length - 1], stockCard)) moveExists = true;
+			if (tableau.length > 0 && validAdjacentCards(tableau[tableau.length - 1], stockCard)) moveExists = true;
 		});
 	});
+	// console.log('stock -> tableau/foundation', moveExists);
 	// for the top card of each foundation, check if it can be moved to the tableau (foundation -> foundation is always meaningless)
 	foundations.forEach(function (foundation) {
-		tableaus.forEach(function (tableau) {
-			if (validAdjacentCards(tableau[tableau.length - 1], foundation[foundation.length - 1])) moveExists = true;
-		});
+		if (foundation.length > 0) {
+			tableaus.forEach(function (tableau) {
+				if (tableau.length > 0 && validAdjacentCards(tableau[tableau.length - 1], foundation[foundation.length - 1])) moveExists = true;
+			});
+		}
 	});
+	// console.log('foundation -> tableau', moveExists);
 	// for each revealed card in the tableau, check if it can be moved to the foundation or another pile on the tableau
 	tableaus.forEach(function (tableau, col) {
-		tableau.forEach(function(tableauCard, row) {
+		tableau.forEach(function (tableauCard, row) {
 			if (tableauCardIsHidden[col][row]) return; // ignore hidden cards
 			foundations.forEach(function (foundation) {
 				if (tableauCard[1] === 'A' || (INITIAL_DECK.indexOf(tableauCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
-					xxxCard[0] === foundation[foundation.length - 1][0])) {
-						moveExists = true;
+					tableauCard[0] === foundation[foundation.length - 1][0])) {
+					moveExists = true;
 				}
 			});
 			tableaus.forEach(function (otherTableau, otherCol) {
-				if (col !== otherCol && validAdjacentCards(otherTableau[otherTableau.length - 1], tableauCard)) moveExists = true;
+				if (col !== otherCol && otherTableau.length > 0 && validAdjacentCards(otherTableau[otherTableau.length - 1], tableauCard)) moveExists = true;
 			});
 		});
 	});
+	// console.log('tableau -> tableau/foundation', moveExists);
 	return !moveExists;
 }
 
@@ -294,6 +300,9 @@ function render() {
 	renderHeldCards();
 
 	if (isGameWon()) alert('Winner!');
+	if (isGameLost()) {
+		// add losing message here
+	}
 }
 
 function renderStock() {
