@@ -13,7 +13,13 @@ Cards may also be moved one at a time from the _waste_ or _tableau_ to the _foun
 The game is won when all 52 cards have been moved to the _foundation_.  The game is lost if no more moves can be made to advance the game state.
 
 ## Screenshots
-Add screenshots here.
+![New Game](https://i.imgur.com/LJfbK6q.png "New Game")
+
+![Game in Progress](https://i.imgur.com/C36J5cH.png "Game in Progress")
+
+![Game Over](https://i.imgur.com/g29WbNf.png "Game Over")
+
+![Game Won](https://i.imgur.com/8P31I7m.png "Game Won")
 
 ## Technologies Used
 - HTML
