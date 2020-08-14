@@ -7,12 +7,6 @@ const INITIAL_DECK = [
 	'dA', 'd02', 'd03', 'd04', 'd05', 'd06', 'd07', 'd08', 'd09', 'd10', 'dJ', 'dQ', 'dK'
 ];
 
-//Maybe...
-//DEAL = 3;
-//REDEALS = Math.INFINITY;
-//as rule variant configs?
-
-
 /*----- app's state (variables) -----*/
 // 1D arrays (stacks)
 let stock;
@@ -25,12 +19,6 @@ let tableauCardIsHidden;
 let currentlyHeld;
 // 1D array, untouched outside of init and restart
 let shuffledDeck;
-
-// Stretch Goals:
-// array (stack) of undo functions
-//     every time a handle*Click function moves one or more cards, push a function to reverse that change (including revealing cards)
-
-
 
 /*----- cached element references -----*/
 const stockEl = document.querySelector('#stock');
@@ -45,13 +33,9 @@ document.querySelector('#new-game').addEventListener('click', function () { init
 document.querySelector('#restart').addEventListener('click', function () { init(shuffledDeck) });
 document.querySelector('html').addEventListener('mousemove', handleMousemove);
 
-// undo?
-// selectable rule variations?
-
 /*----- functions -----*/
 function handleClick(e) {
 	if (isGameWon() || (currentlyHeld.cards.length === 0 && isGameLost())) return;
-	// console.log(e.target);
 	if (e.target.id === 'stock') handleStockClick(e);
 	if (e.target.id === 'waste' || e.target.parentElement.id === 'waste') handleWasteClick(e);
 	if (e.target.classList.contains('foundation-base') || e.target.classList.contains('foundation-card')) handleFoundationClick(e);
@@ -73,11 +57,8 @@ function handleStockClick(e) {
 		while (waste.length > 0) {
 			stock.push(waste.pop());
 		}
-		// TODO: add undo handler
 	} else if (stock.length > 0) {
-		// just dealing 1 card for now, because it's much easier to win
 		waste.push(stock.pop());
-		// TODO: add undo handler
 	}
 }
 
@@ -105,18 +86,15 @@ function handleFoundationClick(e) {
 			foundation.push(currentlyHeld.cards.pop());
 			currentlyHeld.source = null;
 		} else if (!currentlyHeld.source.startsWith('foundation')) {
-			// console.log(foundation);
 			let topCard = foundation[foundation.length - 1];
 			let heldCard = currentlyHeld.cards[0];
 
 			if (foundation.length === 0 && heldCard.match(/A/)) {
 				foundation.push(currentlyHeld.cards.pop());
 				currentlyHeld.source = null;
-				// TODO: add undo handler
 			} else if (foundation.length > 0 && topCard[0] === heldCard[0] && INITIAL_DECK.indexOf(heldCard) === INITIAL_DECK.indexOf(topCard) + 1) {
 				foundation.push(currentlyHeld.cards.pop());
 				currentlyHeld.source = null;
-				// TODO: add undo handler
 			}
 		}
 	}
@@ -152,7 +130,6 @@ function handleTableauClick(e) {
 					tableau.push(currentlyHeld.cards.shift());
 				}
 				currentlyHeld.source = null;
-				// TODO: add undo handler
 			}
 		} else { // implied tableau.length === 0
 			// case: placing a king on an empty pile
@@ -161,11 +138,9 @@ function handleTableauClick(e) {
 					tableau.push(currentlyHeld.cards.shift());
 				}
 				currentlyHeld.source = null;
-				// TODO: add undo handler
 			}
 		}
 	}
-
 }
 
 // checks if two cards (on the tableau) can be placed or picked up together
@@ -196,7 +171,6 @@ function isGameLost() {
 			if (tableau.length > 0 && validAdjacentCards(tableau[tableau.length - 1], wasteCard)) moveExists = true;
 		});
 	});
-	// console.log('waste -> tableau/foundation', moveExists);
 	stock.forEach(function (stockCard) {
 		foundations.forEach(function (foundation) {
 			if (stockCard[1] === 'A' || (INITIAL_DECK.indexOf(stockCard) === INITIAL_DECK.indexOf(foundation[foundation.length - 1]) + 1 &&
@@ -208,7 +182,6 @@ function isGameLost() {
 			if (tableau.length > 0 && validAdjacentCards(tableau[tableau.length - 1], stockCard)) moveExists = true;
 		});
 	});
-	// console.log('stock -> tableau/foundation', moveExists);
 	// for the top card of each foundation, check if it can be moved to the tableau (foundation -> foundation is always meaningless)
 	foundations.forEach(function (foundation) {
 		if (foundation.length > 0) {
@@ -217,7 +190,6 @@ function isGameLost() {
 			});
 		}
 	});
-	// console.log('foundation -> tableau', moveExists);
 	// for each revealed card in the tableau, check if it can be moved to the foundation or another pile on the tableau
 	tableaus.forEach(function (tableau, col) {
 		tableau.forEach(function (tableauCard, row) {
@@ -233,7 +205,6 @@ function isGameLost() {
 			});
 		});
 	});
-	// console.log('tableau -> tableau/foundation', moveExists);
 	return !moveExists;
 }
 
@@ -263,7 +234,6 @@ function init(deckToUse) {
 
 	shuffledDeck = deckToUse ? deckToUse : shuffleDeck([...INITIAL_DECK]);
 	let copyDeck = [...shuffledDeck]; // make a copy so we can use the original to restart a game
-	// console.log(shuffledDeck);
 
 	// deal to the tableaus
 	tableaus.forEach(function (pileArr, pileNum) {
@@ -271,11 +241,9 @@ function init(deckToUse) {
 			pileArr.push(copyDeck.pop());
 		}
 	});
-	// console.log(tableaus, copyDeck);
 
 	// put the rest of the deck on the stock
 	stock = [...copyDeck];
-	// console.log(stock);
 
 	render();
 }
@@ -285,9 +253,6 @@ function shuffleDeck(deck) {
 	for (let i = deck.length - 1; i > 0; i--) {
 		let rndIdx = Math.floor(Math.random() * (i + 1));
 		[deck[i], deck[rndIdx]] = [deck[rndIdx], deck[i]];
-		// let temp = deck[i];
-		// deck[i] = deck[rndIdx];
-		// deck[rndIdx] = temp;
 	}
 	return deck;
 }
@@ -356,6 +321,7 @@ function renderTableau() {
 			// clear previous child chain - room for optimization here
 			if (tableauEl.firstChild) tableauEl.firstChild.remove();
 			tableauEl.classList.remove('outline');
+
 			// build a div chain from the end of the pile
 			let childCardEl;
 			for (let j = tableau.length - 1; j >= 0; j--) {
@@ -381,11 +347,7 @@ function renderTableau() {
 }
 
 function renderHeldCards() {
-	// held cards
-	// draw on the cursor
 	if (currentlyHeld.cards.length > 0) {
-		// console.log('currentlyHeld:\n', currentlyHeld.cards, '\nfrom:', currentlyHeld.source);
-
 		// clear previous child chain - room for optimization here
 		if (heldCardsEl.firstChild) heldCardsEl.firstChild.remove();
 
@@ -394,7 +356,6 @@ function renderHeldCards() {
 		for (let j = currentlyHeld.cards.length - 1; j >= 0; j--) {
 			let newCardEl = document.createElement('div');
 			newCardEl.classList.add('card', 'large', currentlyHeld.cards[j]);
-			// newCardEl.id = `${heldCardsEl.id}-card-${j}`;
 			if (childCardEl) {
 				newCardEl.appendChild(childCardEl);
 			}
