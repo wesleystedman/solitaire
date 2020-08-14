@@ -1,33 +1,50 @@
+* {
+	box-sizing: border-box;
+}
+
 body {
 	display: flex;
 	flex-direction: column;
-	/* justify-content: center; */
 	align-items: center;
+	margin: 0;
+	overflow: hidden;
+	/* background-color: #4b1f01; */
 }
 
 header {
 	display: flex;
 	flex-direction: row;
+	width: 864px;
+	justify-content: space-evenly;
+	/* background-color: rgb(211, 165, 12); */
 }
 
-header * {
-	/* padding: 0 5px; */
+header button {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-radius: 10%;
+	width: 100px;
+	height: 61.8px;
+	white-space: nowrap;
 }
 
 #gameboard {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	grid-template-rows: repeat(2, 1fr);
+	grid-template-rows: 193px 1fr;
 	grid-template-areas: 
 		'stock   waste    .....  foundation foundation foundation foundation'
 		'tableau tableau tableau  tableau    tableau    tableau    tableau';
-	/* gap: 10px 10px; */
 	width: max-content;
-	/* border: solid black; */
-	/* background-color: darkgreen; */
+	height: calc(100vh - 112px);
 	justify-items: center;
 	align-items: start;
 	align-content: start;
+
+	background-color: darkgreen;
+	padding: 20px 30px;
+	border-radius: 25px;
+	border: solid #daa520;
 }
 
 #stock {
@@ -48,8 +65,6 @@ header * {
 
 #foundation, #tableau {
 	display: flex;
-	/* flex gap is FF>=63, Chrome/Edge >=84, and not yet su */
-	/* gap: 10px 10px; */
 	justify-content: flex-start;
 }
 
@@ -72,7 +87,7 @@ header * {
 }
 
 .tableau-base .card.large, #held-cards-container .card.large {
-	top: 30px; /* TODO: this will need to be changed dynamically if a stack is too big */
+	top: 30px;
 }
 
 .tableau-base > .card.large {
@@ -82,7 +97,6 @@ header * {
 #held-cards-container > .card.large {
 	top: 0px;
 }
-
 
 #held-cards-container {
 	pointer-events: none;

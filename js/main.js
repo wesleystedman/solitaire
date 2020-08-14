@@ -300,9 +300,7 @@ function render() {
 	renderHeldCards();
 
 	if (isGameWon()) alert('Winner!');
-	if (isGameLost()) {
-		// add losing message here
-	}
+	if (isGameLost()) alert('No more moves! Game over!');
 }
 
 function renderStock() {
@@ -363,8 +361,11 @@ function renderTableau() {
 			for (let j = tableau.length - 1; j >= 0; j--) {
 				let newCardEl = document.createElement('div');
 				newCardEl.classList.add('tableau-card', 'card', 'large', tableauCardIsHidden[i][j] ? 'back' : tableau[j]);
-
 				newCardEl.id = `${tableauEl.id}-card-${j}`;
+				if (j > 0) {
+					// '100vh - 560px' was derived from the height of the gameboard div and testing data.
+					newCardEl.style.top = `max(0px, min(30px, (100vh - 560px) / ${tableau.length - 1}))`;
+				}
 				if (childCardEl) {
 					newCardEl.appendChild(childCardEl);
 				}
