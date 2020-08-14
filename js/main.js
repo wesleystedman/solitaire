@@ -26,6 +26,7 @@ const wasteEl = document.querySelector('#waste');
 const foundationEls = document.querySelectorAll('.foundation-base');
 const tableauEls = document.querySelectorAll('.tableau-base');
 const heldCardsEl = document.querySelector('#held-cards-container');
+const msgEl = document.querySelector('#msg');
 
 /*----- event listeners -----*/
 document.querySelector('#gameboard').addEventListener('click', handleClick);
@@ -245,6 +246,10 @@ function init(deckToUse) {
 	// put the rest of the deck on the stock
 	stock = [...copyDeck];
 
+	// reset win/loss message
+	msgEl.style.display = 'none';
+	msgEl.textContent = ''
+
 	render();
 }
 
@@ -264,8 +269,13 @@ function render() {
 	renderTableau();
 	renderHeldCards();
 
-	if (isGameWon()) alert('Winner!');
-	if (isGameLost()) alert('No more moves! Game over!');
+	if (isGameWon()) {
+		msgEl.style.display = 'block';
+		msgEl.textContent = 'Winner!';
+	} else if (currentlyHeld.cards.length === 0 && isGameLost()) {
+		msgEl.style.display = 'block';
+		msgEl.textContent ='No more moves! Game over!';
+	}
 }
 
 function renderStock() {

@@ -103,3 +103,14 @@ header button {
 	left: var(--x);
 	top: var(--y);
 }
+
+#msg {
+	display: none;
+	position: absolute;
+	background-color: white;
+	border-radius: 1em;
+	border: solid black;
+	top: min(50vh, 340px);
+	font-size: 28px;
+	padding: 1em;
+}
