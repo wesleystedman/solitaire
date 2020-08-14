@@ -25,6 +25,7 @@ header button {
 	width: 100px;
 	height: 61.8px;
 	white-space: nowrap;
+	font-family: 'Roboto Slab', serif;
 }
 
 #gameboard {
